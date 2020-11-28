@@ -56,10 +56,24 @@ def write_to_file(file_name, path):
         [description]
 
     """
+    '''f = open(path+file_name+".txt", "a")
+    f.write()
+    f.close()'''
+    f = open(path + file_name + ".txt", "w")
+    print('Filename:', file_name, file=f)
 
-    raise NotImplementedError
 
 def get_start(maze_map):
+    """
+
+    Parameters
+    ----------
+    maze_map
+
+    Returns
+    -------
+
+    """
     for i in range(0,maze_map.__len__()):
         for j in range(maze_map[i].__len__()):
             if maze_map[i][j] == 's':
@@ -67,6 +81,16 @@ def get_start(maze_map):
 
 
 def get_goal(maze_map):
+    """
+
+    Parameters
+    ----------
+    maze_map
+
+    Returns
+    -------
+
+    """
     goals=[]
     for i in range(0,maze_map.__len__()):  
         for j in range(0,maze_map[i].__len__()):
@@ -75,13 +99,46 @@ def get_goal(maze_map):
     return goals
 
 def get_tree_node(tree, node):
+    """
+
+    Parameters
+    ----------
+    tree
+    node
+
+    Returns
+    -------
+
+    """
    
     return tree[node[0]][node[1]]
 
 def show_way(maze_map, the_way):
+    """
+
+    Parameters
+    ----------
+    maze_map
+    the_way
+
+    Returns
+    -------
+
+    """
     return maze_map
 
 def this_is_the_way(start, goal):
+    """
+
+    Parameters
+    ----------
+    start
+    goal
+
+    Returns
+    -------
+
+    """
     the_way = []
     start_node = start# get_tree_node(tree,start)
     node = goal#get_tree_node(tree,goal)
@@ -113,9 +170,29 @@ class Element_Node:
             return False
         return True
     def __eq__(self, other):
+        """
+
+        Parameters
+        ----------
+        other
+
+        Returns
+        -------
+
+        """
         return self.i == other.i & self.j == other.j
 
     def get_neighbour(self, maze_map):
+        """
+
+        Parameters
+        ----------
+        maze_map
+
+        Returns
+        -------
+
+        """
         coord_list = []
         coordinate = [self.i,self.j]
         #print(coordinate)
@@ -132,8 +209,34 @@ class Element_Node:
 
         return coord_list
 
+def iterative_search():
 
-def assign_character_for_nodes(editable_map, current_node_index, way):
+
+    return None
+
+def assign_character_for_nodes(maze_map, current_node, prev_node):
+    """Function to assign character for the visited nodes. Please assign
+    meaningful characters based on the direction of tree traversal.
+
+    Parameters
+    ----------
+    maze_map : [type]
+        [description]
+    current_node : [type]
+        [description]
+    prev_node : [type]
+        [description]
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
+
+
+    return char_map
+
+'''def assign_character_for_nodes(editable_map, current_node_index, way):
     """ can also edid previus nodes
 
     Parameters
@@ -194,22 +297,19 @@ def assign_character_for_nodes(editable_map, current_node_index, way):
         editable_map[cur_x][cur_y] = "*"    #if the last iteration deleted the goal symbol
     #-----</visualize way>--------
     
-    return editable_map
+    return editable_map'''
 
 def show_way_in_maze_map(maze_map, way):
-    """ append the way from start to goal to the given maze map
+    """
 
     Parameters
     ----------
-    maze_map : [tuple]
-        []
-    way : [list of lists]
-        [a ordered list with all necessary nodes from start to goal]
+    maze_map
+    way
 
     Returns
     -------
-    [tuple]
-        [the updated maze_map]
+
     """
     #----<convert tuple to list>---- # make it editable
     editable_map = list()
@@ -231,6 +331,16 @@ def show_way_in_maze_map(maze_map, way):
     return maze_map
 
 def print_map(map):
+    """
+
+    Parameters
+    ----------
+    map
+
+    Returns
+    -------
+
+    """
     for row in map:
         for char in row:
             print(char, end = '')

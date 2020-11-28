@@ -8,7 +8,7 @@ Created on Fri Apr 27 21:15:04 2018
 import sys
 import os
 from collections import deque
-from helper import maze_map_to_tree, write_to_file, assign_character_for_nodes, get_start, get_goal, get_tree_node, this_is_the_way, show_way, show_way_in_maze_map, print_map
+from helper import maze_map_to_tree, write_to_file, assign_character_for_nodes, get_start, get_goal, get_tree_node, this_is_the_way, show_way, show_way_in_maze_map, print_map, write_to_file
 
 
 def breadth_first_search(maze_map, start_pos, goal_pos):
@@ -51,7 +51,7 @@ def breadth_first_search(maze_map, start_pos, goal_pos):
         if current_node_node.get_coord() == goal_node.get_coord():
             the_way = this_is_the_way(start_node, goal_node)
             new_maze_map = show_way_in_maze_map(maze_map, the_way)
-            print('worked with Result: \n')
+            #print('worked with Result: \n')
             #print(the_way)
             return new_maze_map
         neighbour = current_node_node.get_neighbour(maze_map)
@@ -62,7 +62,7 @@ def breadth_first_search(maze_map, start_pos, goal_pos):
                 queue.append(neigh)
                 neigh_node.set_parent(current_node_node)
 
-    print('worked with no Result: \n')
+    #print('worked with no Result: \n')
     return maze_map
 
 
@@ -95,15 +95,23 @@ if __name__ == '__main__':
     # CALL THESE FUNCTIONS after filling in the necessary implementations
     start_pos_map1 = get_start(maze_map_map1)
     goal_pos_map1 =get_goal(maze_map_map1)
+    #write_to_file(os.path.join(working_directory,'results'), 'map1res.txt')
+    #f = open(os.path.join(working_directory, 'results' + '/map1res.txt'), "w")
+    #print('Filename:', '/map1res.txt', file=f)
+    sys.stdout=open(os.path.join(working_directory, 'results' + '/map1res.txt'),"w", encoding='utf-8')
+    
+
+
     for goal_pos in goal_pos_map1:
 
         path_map1 = breadth_first_search(maze_map_map1, start_pos_map1, goal_pos)
-        print('\nSolution: ')
+        print('\nSolution for: ')
+        print(goal_pos)
         print_map(path_map1)
 
         # write_to_file("bfs_map3", path_map3)
     # write_to_file("bfs_map1", path_map1)
-
+    '''
     start_pos_map2 = get_start(maze_map_map2)
     goal_pos_map2 =get_goal(maze_map_map2)
     for goal_pos in goal_pos_map2:
@@ -128,3 +136,5 @@ if __name__ == '__main__':
         # write_to_file("bfs_map3", path_map3)
     # path_map3 = breadth_first_search(maze_map_map3, start_pos_map3, goal_pos_map3)
     # write_to_file("bfs_map3", path_map3)
+    '''
+    sys.stdout.close()
