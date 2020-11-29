@@ -9,6 +9,7 @@ Created on Thu May  3 01:36:01 2018
 import sys
 import os
 import time
+from collections import deque
 
 
 def maze_map_to_tree(maze_map):
@@ -28,7 +29,7 @@ def maze_map_to_tree(maze_map):
     """
     
     empty_tree= []
-    current_row = []
+    #current_row = []
 
     rows = len(maze_map)
     columns = len(maze_map[0])
@@ -103,11 +104,12 @@ def get_tree_node(tree, node):
 
     Parameters
     ----------
-    tree
-    node
+    tree: [maze map as tree containing Element_Nodes]
+    node: [Coordinates]
 
     Returns
     -------
+    Element_Node : Complex datatype of Node, containing parent etc.
 
     """
    
@@ -123,9 +125,24 @@ def show_way(maze_map, the_way):
 
     Returns
     -------
+    maze_map with drawn the_way line
 
     """
-    return maze_map
+
+     #same way as in printing the map
+    modded_map = []
+    
+    for row in maze_map:
+        rows = []
+        for char in row:
+            rows.append(char)
+        modded_map.append(rows)
+    #use the char map for inserting the line with help function
+    for i in range(1,the_way.__len__()):
+        modded_map = assign_character_for_nodes(modded_map,i, the_way) 
+    modded_map= tuple(modded_map)
+    return modded_map
+
 
 def this_is_the_way(start, goal):
     """
@@ -158,6 +175,7 @@ class Element_Node:
         self.i = i
         self.j = j
         self.parent = None
+        self.depth = None
     
     def get_coord(self):
         return [self.i,self.j]
@@ -165,6 +183,10 @@ class Element_Node:
         return self.parent
     def set_parent(self, parent):
         self.parent = parent
+    def set_depth(self, depth):
+        self.depth = depth
+    def get_depth(self):
+        return self.depth
     def is_visited(self):
         if (self.parent is None):
             return False
@@ -209,136 +231,141 @@ class Element_Node:
 
         return coord_list
 
-def iterative_search():
+def iterative_search(maze_map, start_pos, goal_pos, depth):
+    """
+    Parameters
+    ----------
+    maze_map : []
+        [2d array of chars]
+    start_pos : [tuple]
+        [coordinates of the start point in the map]
+    goal_pos : [tuple]
+        []
+
+    Returns
+    -------
+    [maze_map]
+        [modded_maze_map with drawn line fitting to the algorythm: dfs]
+    """
+    
+    queue = deque()
+    queue.append(start_pos)
+
+    # Fill in your BFS algorithm here
+    tree = maze_map_to_tree(maze_map)
+    start_node = get_tree_node(tree, start_pos)
+    start_node.set_depth(0)
+    goal_node = get_tree_node(tree, goal_pos)
+    #goal_node.set_depth(0)
+    #print(goal_node.get_coord)
+    #print(goal_pos)
+    while queue.__len__() > 0:
+        current_node = queue.pop() #only difference to bfs in this implementation, Stack(LIFO)
+        current_node_node = get_tree_node(tree, current_node)
+        #print(current_node_node.get_coord())
+        #print(current_node)
+        if current_node_node.get_coord() == goal_node.get_coord():
+            the_way = this_is_the_way(start_node, goal_node)
+            new_maze_map = show_way(maze_map, the_way)
+
+            #print(the_way)
+            return new_maze_map
+        if current_node_node.get_depth() < depth:
+
+            neighbour = current_node_node.get_neighbour(maze_map)
+            #print(neighbour)
+            for neigh in neighbour:
+                neigh_node = get_tree_node(tree, neigh)
+                if neigh_node.is_visited() == False:
+                    queue.append(neigh)
+                    neigh_node.set_parent(current_node_node)
+                    neigh_node.set_depth(current_node_node.get_depth()+1)
 
 
-    return None
+    return maze_map
 
-def assign_character_for_nodes(maze_map, current_node, prev_node):
+
+def assign_character_for_nodes(modded_map, i, the_way):
     """Function to assign character for the visited nodes. Please assign
     meaningful characters based on the direction of tree traversal.
 
     Parameters
     ----------
-    maze_map : [type]
-        [description]
-    current_node : [type]
-        [description]
-    prev_node : [type]
-        [description]
+    modded_map : [list of list of Element_Nodes]
+        [representation of the maze, that gets the drawn line injected]
+    index : [int]
+        [positional argument for the_way list]
+    the_way [list of coordinates]
+        [way from s to *]
 
     Returns
     -------
-    [type]
-        [description]
+    modded_map : [list of list of Element_Nodes]
+        [new maze_map with drawn line]
     """
+    vertical = "\u2502"     
+    horizontal = "\u2500"   
+    left_down = "\u2510"    
+    up_right = "\u2514"     
+    left_up = "\u2518"      
+    down_right = "\u250c"   
 
 
-    return char_map
+    current_X = the_way[i][0]
+    current_Y = the_way[i][1]
+    previous_X = the_way[i-1][0]
+    previous_Y = the_way[i-1][1]
 
-'''def assign_character_for_nodes(editable_map, current_node_index, way):
-    """ can also edid previus nodes
+    #four possibilities: left/right/above/under
 
-    Parameters
-    ----------
-    editable_map : [list of lists]
-        [the 2dim index describs the position. The content is the unicode character at this position ]
-    current_node_index : [int]
-        [the index in "way" with the newest visited node]
-    way : [list of list]
-        [a list of lists with the visited nodes as 2d coords]
+    if (current_X > previous_X):    #above
+        modded_map[current_X][current_Y] = vertical
+        if i < 2: return modded_map
+        if the_way[i-2][1] > the_way[i-1][1]: 
+            modded_map[the_way[i-1][0]][the_way[i-1][1]] = down_right
+        if the_way[i-2][1] < the_way[i-1][1]: 
+            modded_map[the_way[i-1][0]][the_way[i-1][1]] = left_down
 
-    Returns
-    -------
-    [list of lists]
-        [same as editable_map paramater]
-    """
-    
-    i = current_node_index #to visualize, the way the current, previus and pre previus node is necessary
-    #x=row
-    cur_x = way[i][0]
-    cur_y = way[i][1]
-    prev_x = way[i-1][0]
-    prev_y = way[i-1][1]
+    if (current_X < previous_X):    #under
+        modded_map[current_X][current_Y] = vertical
+        if i < 2: return modded_map
+        if the_way[i-2][1] > the_way[i-1][1]: 
+            modded_map[the_way[i-1][0]][the_way[i-1][1]] = up_right
+        if the_way[i-2][1] < the_way[i-1][1]: 
+            modded_map[the_way[i-1][0]][the_way[i-1][1]] = left_up
 
-    if prev_y < cur_y:  #comes from left
-        editable_map[cur_x][cur_y] = '\u2500' # "-"
-        if i < 2: return editable_map #prevent from overriding S
-        if way[i-2][0] < way[i-1][0]: # if prevprev is over prev 
-            editable_map[way[i-1][0]][way[i-1][1]] = '\u2514' #change prev to "L"
-        if way[i-2][0] > way[i-1][0]: # if prevprev is under prev
-            editable_map[way[i-1][0]][way[i-1][1]] = '\u250c' #change prev to ",-"
-    
-    elif prev_y > cur_y:  #comes from right
-        editable_map[cur_x][cur_y] = '\u2500' # "-"
-        if i < 2: return editable_map
-        if way[i-2][0] < way[i-1][0]: # if prevprev is over prev
-            editable_map[way[i-1][0]][way[i-1][1]] = '\u2518' #change prev to "_|"
-        if way[i-2][0] > way[i-1][0]: # if prevprev is under prev
-            editable_map[way[i-1][0]][way[i-1][1]] = '\u2510' #change prev to "-,"
+    if (current_Y < previous_Y):    #right
+        modded_map[current_X][current_Y] = horizontal
+        if i < 2: return modded_map
+        if the_way[i-2][0] > the_way[i-1][0]: 
+            modded_map[the_way[i-1][0]][the_way[i-1][1]] = left_down
+        if the_way[i-2][0] < the_way[i-1][0]: 
+            modded_map[the_way[i-1][0]][the_way[i-1][1]] = left_up
 
-    elif prev_x > cur_x:  #comes from under
-        editable_map[cur_x][cur_y] = '\u2502' # "|"
-        if i < 2: return editable_map
-        if way[i-2][1] > way[i-1][1]: # if prevprev is right from prev
-            editable_map[way[i-1][0]][way[i-1][1]] = '\u2514' #change prev to "L"
-        if way[i-2][1] < way[i-1][1]: # if prevprev is left from prev
-            editable_map[way[i-1][0]][way[i-1][1]] = '\u2518' #change prev to "_|"
+    if (current_Y > previous_Y):    #left
+        modded_map[current_X][current_Y] = horizontal
+        if i < 2: return modded_map
+        if the_way[i-2][0] > the_way[i-1][0]: 
+            modded_map[the_way[i-1][0]][the_way[i-1][1]] = down_right
+        if the_way[i-2][0] < the_way[i-1][0]: 
+            modded_map[the_way[i-1][0]][the_way[i-1][1]] = up_right
 
-    elif prev_x < cur_x:  #comes from above
-        editable_map[cur_x][cur_y] = '\u2502' # "|"
-        if i < 2: return editable_map
-        if way[i-2][1] > way[i-1][1]: # if prevprev is right from prev
-            editable_map[way[i-1][0]][way[i-1][1]] = '\u250c' #change prev to ",-"
-        if way[i-2][1] < way[i-1][1]: # if prevprev is left from prev
-            editable_map[way[i-1][0]][way[i-1][1]] = '\u2510' #change prev to "-,"
+    if(i == the_way.__len__()-1):
+        modded_map[current_X][current_Y] = 'S'
 
-    if i== (len(way)-1):
-        editable_map[cur_x][cur_y] = "*"    #if the last iteration deleted the goal symbol
-    #-----</visualize way>--------
-    
-    return editable_map'''
+    return modded_map
 
-def show_way_in_maze_map(maze_map, way):
-    """
-
-    Parameters
-    ----------
-    maze_map
-    way
-
-    Returns
-    -------
-
-    """
-    #----<convert tuple to list>---- # make it editable
-    editable_map = list()
-    row_list = list()
-    for row in maze_map:
-        for char in row:
-            row_list.append(char)
-        editable_map.append(row_list)
-        row_list=list()
-    #----</convert tuple to list>----
-    #----<iterate thought the way>----
-    
-    for i in range(1,len(way)): #dont override start and goal symbol
-        editable_map = assign_character_for_nodes(editable_map,i, way)
-    #----</iterate thought the way>----    
-    #----<convert list to tuple>----
-    maze_map= tuple(editable_map)
-    #----</convert list to tuple>----    
-    return maze_map
 
 def print_map(map):
     """
 
     Parameters
     ----------
-    map
+    map : maze_map
 
     Returns
     -------
+    Void : Prints Map in Terminal
 
     """
     for row in map:

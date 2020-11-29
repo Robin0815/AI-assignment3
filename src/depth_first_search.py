@@ -8,7 +8,7 @@ Created on Fri Apr 27 21:15:04 2018
 import sys
 import os
 from collections import deque
-from helper import maze_map_to_tree, write_to_file, assign_character_for_nodes, get_start, get_goal, get_tree_node, this_is_the_way, show_way, show_way_in_maze_map, print_map
+from helper import maze_map_to_tree, write_to_file, assign_character_for_nodes, get_start, get_goal, get_tree_node, this_is_the_way, show_way, print_map, write_to_file
 
 
 def depth_first_search(maze_map, start_pos, goal_pos):
@@ -19,17 +19,17 @@ def depth_first_search(maze_map, start_pos, goal_pos):
 
     Parameters
     ----------
-    maze_map : [type]
-        [description]
-    start_pos : [type]
-        [description]
-    goal_pos : [type]
-        [description]
+    maze_map : []
+        [2d array of chars]
+    start_pos : [tuple]
+        [coordinates of the start point in the map]
+    goal_pos : [tuple]
+        []
 
     Returns
     -------
-    [type]
-        [description]
+    [maze_map]
+        [modded_maze_map with drawn line fitting to the algorythm: dfs]
     """
 
     queue = deque()
@@ -42,26 +42,16 @@ def depth_first_search(maze_map, start_pos, goal_pos):
     #print(goal_node.get_coord)
     #print(goal_pos)
     while queue.__len__() > 0:
-        current_node = queue.pop()
+        current_node = queue.pop() #only difference to bfs in this implementation, Stack(LIFO)
         current_node_node = get_tree_node(tree, current_node)
         #print(current_node_node.get_coord())
         #print(current_node)
         if current_node_node.get_coord() == goal_node.get_coord():
             the_way = this_is_the_way(start_node, goal_node)
-            new_maze_map = show_way_in_maze_map(maze_map, the_way)
-            print('worked with Result: \n')
+            new_maze_map = show_way(maze_map, the_way)
+            print('Worked with result for: ')
             #print(the_way)
             return new_maze_map
-            '''the_way = []
-            node = goal_node
-            #print(type(node))
-            while node.get_coord() != start_node.get_coord():
-                the_way.append(node.get_coord())
-                #print(type(node.get_parent().get_parent()))
-                node= node.get_parent()#get_tree_node(tree,node.get_parent)
-            the_way.append(start_node.get_coord())
-            the_way.reverse
-            return the_way'''
         neighbour = current_node_node.get_neighbour(maze_map)
         #print(neighbour)
         for neigh in neighbour:
@@ -70,7 +60,7 @@ def depth_first_search(maze_map, start_pos, goal_pos):
                 queue.append(neigh)
                 neigh_node.set_parent(current_node_node)
 
-    print('worked')
+    print('Worked with no result for: ')
     return maze_map
 
 
@@ -100,28 +90,34 @@ if __name__ == '__main__':
         maze_map_map3 = f3.readlines()
 
     # CALL THESE FUNCTIONS after filling in the necessary implementations
+    #uncomment the next and the last line to create txt file with output
+    #sys.stdout=open(os.path.join(working_directory, 'results' + '/DFSres.txt'),"w", encoding='utf-8')
+
     start_pos_map1 = get_start(maze_map_map1)
     goal_pos_map1 =get_goal(maze_map_map1)
+
+
     for goal_pos in goal_pos_map1:
 
         path_map1 = depth_first_search(maze_map_map1, start_pos_map1, goal_pos)
-        print('\nSolution: ')
+        print(goal_pos)
         print_map(path_map1)
 
-        # write_to_file("dfs_map3", path_map3)
+        # write_to_file("bfs_map3", path_map3)
     # write_to_file("bfs_map1", path_map1)
-
+    
+    
     start_pos_map2 = get_start(maze_map_map2)
     goal_pos_map2 =get_goal(maze_map_map2)
     for goal_pos in goal_pos_map2:
 
         path_map2 = depth_first_search(maze_map_map2, start_pos_map2, goal_pos)
-        print('\nSolution: ')
+        print(goal_pos)
         print_map(path_map2)
         
-        # write_to_file("dfs_map3", path_map3)
+        # write_to_file("bfs_map3", path_map3)
     # path_map2 = breadth_first_search(maze_map_map2, start_pos_map2, goal_pos_map2)
-    # write_to_file("dfs_map2", path_map2)
+    # write_to_file("bfs_map2", path_map2)
 
 
     start_pos_map3 = get_start(maze_map_map3)
@@ -129,9 +125,11 @@ if __name__ == '__main__':
     for goal_pos in goal_pos_map3:
 
         path_map3 = depth_first_search(maze_map_map3, start_pos_map3, goal_pos)
-        print('\nSolution: ')
+        print(goal_pos)
         print_map(path_map3)
 
-        # write_to_file("dfs_map3", path_map3)
+        # write_to_file("bfs_map3", path_map3)
     # path_map3 = breadth_first_search(maze_map_map3, start_pos_map3, goal_pos_map3)
     # write_to_file("bfs_map3", path_map3)
+    
+    #sys.stdout.close()
