@@ -91,7 +91,7 @@ if __name__ == '__main__':
 
     # CALL THESE FUNCTIONS after filling in the necessary implementations
     #uncomment the next and the last line to create txt file with output
-    #sys.stdout=open(os.path.join(working_directory, 'results' + '/DFSres.txt'),"w", encoding='utf-8')
+    #sys.stdout=open(os.path.join(working_directory, 'results' + '/DFSMap1.txt'),"w", encoding='utf-8')
 
     start_pos_map1 = get_start(maze_map_map1)
     goal_pos_map1 =get_goal(maze_map_map1)
@@ -105,8 +105,9 @@ if __name__ == '__main__':
 
         # write_to_file("bfs_map3", path_map3)
     # write_to_file("bfs_map1", path_map1)
+    #sys.stdout.close()
     
-    
+    #sys.stdout=open(os.path.join(working_directory, 'results' + '/DFSMap2.txt'),"w", encoding='utf-8')
     start_pos_map2 = get_start(maze_map_map2)
     goal_pos_map2 =get_goal(maze_map_map2)
     for goal_pos in goal_pos_map2:
@@ -118,8 +119,9 @@ if __name__ == '__main__':
         # write_to_file("bfs_map3", path_map3)
     # path_map2 = breadth_first_search(maze_map_map2, start_pos_map2, goal_pos_map2)
     # write_to_file("bfs_map2", path_map2)
+    #sys.stdout.close()
 
-
+    #sys.stdout=open(os.path.join(working_directory, 'results' + '/DFSMap3.txt'),"w", encoding='utf-8')
     start_pos_map3 = get_start(maze_map_map3)
     goal_pos_map3 =get_goal(maze_map_map3)
     for goal_pos in goal_pos_map3:
@@ -131,5 +133,4 @@ if __name__ == '__main__':
         # write_to_file("bfs_map3", path_map3)
     # path_map3 = breadth_first_search(maze_map_map3, start_pos_map3, goal_pos_map3)
     # write_to_file("bfs_map3", path_map3)
-    
     #sys.stdout.close()
